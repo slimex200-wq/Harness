@@ -1,3 +1,4 @@
 .checkpoints/
 *.bak.*
 /tmp/
+.claude/settings.local.json
