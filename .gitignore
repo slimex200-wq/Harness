@@ -1,0 +1,3 @@
+.checkpoints/
+*.bak.*
+/tmp/
