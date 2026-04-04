@@ -1,0 +1,50 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "required": ["role", "stack", "workflow", "generation"],
+  "properties": {
+    "role": {
+      "type": "string",
+      "description": "사용자 역할 (예: backend developer, fullstack engineer)"
+    },
+    "stack": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "기술 스택 (예: [Python, Django, PostgreSQL])"
+    },
+    "workflow": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "선호 워크플로 (예: [TDD, code review, CI/CD])"
+    },
+    "constraints": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "제약 조건 (예: [Windows only, no Docker])"
+    },
+    "generation": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "세대 번호"
+    },
+    "parent_audit": {
+      "type": ["object", "null"],
+      "properties": {
+        "total_score": { "type": "integer" },
+        "categories": {
+          "type": "object",
+          "additionalProperties": { "type": "integer" }
+        },
+        "weak_categories": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "description": "이전 세대 audit 결과 (1세대는 null)"
+    },
+    "parent_feedback": {
+      "type": ["string", "null"],
+      "description": "M9에서 생성된 개선 피드백 (1세대는 null)"
+    }
+  }
+}
