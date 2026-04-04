@@ -96,17 +96,11 @@ Agent(hm-strategist,
 
 ### Phase 4.5: 사용자 전략 검토
 
-**1세대** (generation이 user_review_generations에 포함):
-1. 전략 문서를 사용자에게 출력
-2. AskUserQuestion으로 승인/수정 요청
-3. 수정 요청 시 피드백을 M4에 전달하여 재생성
-
-**2세대+**:
 자동 품질 게이트 — 전략 문서가 아래 조건을 만족하는지 체크:
 - 모든 섹션 비어있지 않음
 - skills 목록에 harness-maker 포함
 - hooks 경로가 commands/agents와 일관됨
-실패 시 M4 재실행 (최대 2회).
+실패 시 M4 재실행 (최대 2회). 사용자 개입 없음.
 
 ### Phase 5: 빌드 (M5) — 병렬
 

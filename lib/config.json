@@ -2,7 +2,7 @@
   "perfection_threshold": 63,
   "max_generations": 10,
   "smoke_test_task": "hello world 함수를 TDD로 작성해",
-  "user_review_generations": [1],
+  "user_review_generations": [],
   "install_level": "project",
   "parallel_research": true,
   "parallel_build": true,
