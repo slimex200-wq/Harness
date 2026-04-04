@@ -1,0 +1,108 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(flutter *)",
+      "Bash(dart *)",
+      "Bash(firebase emulators:*)",
+      "Bash(flutterfire *)",
+      "Bash(pod install)",
+      "Bash(gradlew *)",
+      "Bash(adb *)",
+      "Bash(dart fix --apply)",
+      "Bash(dart analyze)",
+      "Bash(dart format *)",
+      "Bash(dart run build_runner *)",
+      "Bash(dart pub *)",
+      "Bash(flutter test *)",
+      "Bash(flutter analyze)",
+      "Bash(flutter build apk --debug)",
+      "Bash(flutter build web --debug)",
+      "Bash(flutter build windows --debug)",
+      "Bash(flutter gen-l10n)",
+      "Bash(flutter pub get)",
+      "Bash(flutter pub upgrade)",
+      "Bash(flutter clean)",
+      "Bash(flutter doctor)",
+      "Bash(firebase emulators:start)",
+      "Bash(firebase emulators:exec *)",
+      "Bash(gitleaks detect *)"
+    ],
+    "deny": [
+      "Bash(firebase deploy *)",
+      "Bash(firebase functions:delete *)",
+      "Bash(firebase firestore:delete *)",
+      "Bash(firebase auth:import *)",
+      "Bash(firebase auth:export *)",
+      "Bash(flutter build * --release)",
+      "Bash(flutter build appbundle *)",
+      "Bash(keytool -delete *)",
+      "Bash(rm -rf build/)",
+      "Bash(rm -rf .dart_tool/)",
+      "Bash(dart pub publish)",
+      "Bash(adb shell rm *)",
+      "Bash(firebase hosting:disable *)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -c 'FILEPATH=\"$CLAUDE_FILE_PATH\"; if [[ \"$FILEPATH\" == *.dart ]]; then dart format \"$FILEPATH\" 2>/dev/null || true; fi'",
+            "async": true,
+            "statusMessage": "dart format 자동 적용 중..."
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -c 'FILEPATH=\"$CLAUDE_FILE_PATH\"; if [[ \"$(basename \"$FILEPATH\")\" == \"pubspec.yaml\" ]]; then flutter pub get 2>&1 | tail -5; fi'",
+            "async": true,
+            "statusMessage": "flutter pub get 실행 중..."
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -c 'FILEPATH=\"$CLAUDE_FILE_PATH\"; if [[ \"$FILEPATH\" == *.arb ]]; then flutter gen-l10n 2>&1 | tail -3 || true; fi'",
+            "async": true,
+            "statusMessage": "l10n 생성 중..."
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -c 'INPUT=$(cat); CMD=$(echo \"$INPUT\" | jq -r \".tool_input.command // empty\"); if echo \"$CMD\" | grep -qE \"firebase deploy\"; then echo \"BLOCKED: firebase deploy requires explicit user confirmation.\"; exit 1; fi'",
+            "statusMessage": "Firebase deploy 가드 체크 중..."
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -c 'INPUT=$(cat); CMD=$(echo \"$INPUT\" | jq -r \".tool_input.command // empty\"); if echo \"$CMD\" | grep -qE \"flutter build.*--release\"; then echo \"BLOCKED: Release build requires signing config + user confirmation.\"; exit 1; fi'",
+            "statusMessage": "릴리즈 빌드 가드 체크 중..."
+          }
+        ]
+      }
+    ]
+  },
+  "env": {
+    "COVERAGE_THRESHOLD": "80"
+  }
+}
