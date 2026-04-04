@@ -1,0 +1,89 @@
+{
+  "type": "web",
+  "insights": [
+    {
+      "topic": "Flutter 3.41 (Feb 2026) - Latest Release",
+      "summary": "Flutter 3.41 'Year of the Fire Horse' released Feb 2026. Redesigned learning pathway with Learn/Guides/Reference tabs. Official Flutter+Dart glossary added. Breaking change: deprecation of onReorder callback. Website migrated to Jaspr (Dart web framework).",
+      "source": "https://docs.flutter.dev/release/whats-new",
+      "relevance": 0.95
+    },
+    {
+      "topic": "Flutter 3.38 - Dart Dot Shorthands & Web Config",
+      "summary": "Flutter 3.38 (Nov 2025) introduced Dart dot shorthands syntax for concise code, new web dev config file for host/port/proxy, Widget Previewer tool for IDE integration, full iOS 26/Xcode 26/macOS 26 support, and UIScene lifecycle migration for iOS.",
+      "source": "https://docs.flutter.dev/release/whats-new",
+      "relevance": 0.9
+    },
+    {
+      "topic": "Flutter 3.35 - Hot Reload on Web & AI Integration",
+      "summary": "Flutter 3.35 (Aug 2025) enabled hot reload on web without experimental flag, added 'Create with AI' guide covering Gemini Code Assist/GeminiCLI/Dart+Flutter MCP Server, Widget Previewer in Chrome, and Android sensitive content protection during screen sharing.",
+      "source": "https://docs.flutter.dev/release/whats-new",
+      "relevance": 0.9
+    },
+    {
+      "topic": "Flutter MCP Server for AI Coding Assistants",
+      "summary": "Flutter 3.35 officially documents Dart and Flutter MCP Server integration. This enables AI coding assistants (including Claude Code via MCP protocol) to interact with Flutter projects directly. Key pattern for AI-assisted Flutter development.",
+      "source": "https://docs.flutter.dev/release/whats-new",
+      "relevance": 1.0
+    },
+    {
+      "topic": "Recommended Architecture: Layered MVVM",
+      "summary": "Official Flutter architecture recommends 3-layer approach: UI Layer (widgets/screens), Data Layer (repositories/business logic), Dependency Injection Layer. MVVM pattern with declarative UI and reactive state management. Targets multi-developer teams with scalable codebases.",
+      "source": "https://docs.flutter.dev/app-architecture",
+      "relevance": 0.95
+    },
+    {
+      "topic": "State Management: Progressive Approach",
+      "summary": "Flutter officially recommends progressive state management: start with ChangeNotifier (built-in, no deps), use ListenableBuilder for modern UI updates. Distinguish ephemeral state (widget-local) from app state (cross-screen). Scale to Provider/Riverpod for complex apps.",
+      "source": "https://docs.flutter.dev/get-started/fundamentals/state-management",
+      "relevance": 0.95
+    },
+    {
+      "topic": "Performance: const Constructors & Localized setState",
+      "summary": "Top performance practices: use const constructors everywhere (enables Flutter to skip rebuilds), localize setState() to smallest subtree, prefer StatelessWidget over helper functions, use StringBuffer for concatenation, avoid Opacity widget (use AnimatedOpacity).",
+      "source": "https://docs.flutter.dev/perf/best-practices",
+      "relevance": 0.85
+    },
+    {
+      "topic": "Performance: Lazy Loading & 16ms Frame Budget",
+      "summary": "Always use ListView.builder/GridView.builder for large lists (only visible items built). Target 16ms per frame (60Hz) or 8ms (120Hz). Avoid saveLayer() calls (ShaderMask, ColorFilter trigger them). Minimize clipping; use borderRadius instead.",
+      "source": "https://docs.flutter.dev/perf/best-practices",
+      "relevance": 0.8
+    },
+    {
+      "topic": "Firebase Flutter Integration Patterns",
+      "summary": "FlutterFire provides official Firebase plugins for Flutter. Key packages: firebase_core (required), firebase_auth, cloud_firestore, firebase_storage, firebase_messaging, firebase_analytics. Setup via flutterfire configure CLI. Supports all platforms (iOS/Android/Web/macOS/Windows).",
+      "source": "https://firebase.flutter.dev/docs/overview (knowledge-based, fetch failed)",
+      "relevance": 0.85
+    },
+    {
+      "topic": "Firebase + Flutter: Recommended Architecture",
+      "summary": "Best practice pattern: Repository layer wraps Firebase services, ViewModel/Controller consumes repositories, UI layer uses state management (Riverpod/Provider) to observe ViewModel. Firebase Auth streams integrate naturally with Flutter's reactive model. Use firebase_ui packages for rapid auth/Firestore UI scaffolding.",
+      "source": "knowledge-based (firebase.flutter.dev fetch restricted)",
+      "relevance": 0.8
+    },
+    {
+      "topic": "Riverpod as Leading State Management",
+      "summary": "Riverpod (by Remi Rousselet) is the evolution of Provider. Key advantages: compile-safe, no BuildContext dependency, supports code generation via riverpod_generator, auto-dispose providers. flutter_riverpod package for Flutter integration. Widely adopted as the recommended advanced state management solution.",
+      "source": "knowledge-based (pub.dev fetch restricted)",
+      "relevance": 0.85
+    },
+    {
+      "topic": "Claude Code + Flutter Harness Pattern",
+      "summary": "No established 'Claude Code Flutter harness' exists yet. However, Flutter 3.35+ supports MCP Server integration, enabling Claude Code to leverage Dart/Flutter MCP tools. Recommended harness setup: CLAUDE.md with Flutter/Dart lint rules, dart analyze + flutter test as pre-commit hooks, Riverpod architecture conventions, and Firebase project configuration in settings.",
+      "source": "knowledge-based (no existing harness found)",
+      "relevance": 0.9
+    },
+    {
+      "topic": "Widget Previewer Tool",
+      "summary": "New experimental Widget Previewer tool (Flutter 3.35+) allows previewing Flutter widgets directly in Chrome from VS Code/IntelliJ/Android Studio. Accelerates UI development iteration. Enhanced in 3.38 with better IDE integration.",
+      "source": "https://docs.flutter.dev/release/whats-new",
+      "relevance": 0.7
+    },
+    {
+      "topic": "Windows Flutter Development",
+      "summary": "Flutter supports Windows desktop as a stable target. For Windows dev environment: use flutter doctor to verify setup, Visual Studio 2022 with Desktop C++ workload required. Hot reload works on desktop. Firebase supports Windows via firebase_core_desktop.",
+      "source": "knowledge-based",
+      "relevance": 0.75
+    }
+  ]
+}

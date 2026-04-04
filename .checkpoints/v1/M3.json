@@ -1,0 +1,231 @@
+{
+  "ranked_insights": [
+    {
+      "rank": 1,
+      "topic": "Flutter MCP Server for AI Coding Assistants",
+      "action": "Enable Dart/Flutter MCP Server in project. Configure Claude Code to use it for widget inspection, test generation, and code navigation. Add MCP server config to settings.json.",
+      "source": "web"
+    },
+    {
+      "rank": 2,
+      "topic": "Layered MVVM Architecture with Repository Pattern",
+      "action": "Adopt official Flutter 3-layer architecture: UI Layer (widgets) -> Data Layer (repositories wrapping Firebase) -> DI Layer. Enforce via CLAUDE.md conventions and directory structure (lib/ui/, lib/data/, lib/di/).",
+      "source": "web"
+    },
+    {
+      "rank": 3,
+      "topic": "Hybrid Agent Architecture for Flutter Development",
+      "action": "Use ReAct planning for exploratory tasks (UI debugging, widget tree inspection) and typed deterministic tool execution for known workflows (build, test, deploy). Implement 3-tier granularity: micro (firebase deploy), medium (dart edit/test), macro (cold start pipeline).",
+      "source": "patterns"
+    },
+    {
+      "rank": 4,
+      "topic": "TDD Workflow with Flutter Widget/Unit/Integration Tests",
+      "action": "Enforce RED-GREEN-IMPROVE cycle. Widget tests for UI, unit tests for repositories/viewmodels, integration_test for E2E flows. Target 80%+ coverage. Use flutter test --coverage.",
+      "source": "ecc"
+    },
+    {
+      "rank": 5,
+      "topic": "Firebase + Flutter Repository Pattern",
+      "action": "Repository layer wraps Firebase services (auth, firestore, storage). ViewModel consumes repositories. UI observes via Riverpod providers. Firebase Auth streams integrate with reactive model. Use firebase_ui packages for rapid scaffolding.",
+      "source": "web"
+    },
+    {
+      "rank": 6,
+      "topic": "Riverpod as Primary State Management",
+      "action": "Use flutter_riverpod + riverpod_generator for compile-safe, auto-dispose providers. No BuildContext dependency. Progressive: ChangeNotifier for simple cases, Riverpod for app-wide state.",
+      "source": "web"
+    },
+    {
+      "rank": 7,
+      "topic": "Error Recovery with Flutter-Specific Categories",
+      "action": "Implement structured error recovery: build_failure (clean-rebuild max 2 cycles), runtime_crash (device logs -> error boundary), test_failure (re-run verbose -> check goldens), firebase_error (emulator -> config -> rules), platform_specific (isolate -> native build).",
+      "source": "patterns"
+    },
+    {
+      "rank": 8,
+      "topic": "Security Review for Firebase Auth & Firestore Rules",
+      "action": "Run security review on Firebase auth config, Firestore security rules, API key management, and secure storage before any deploy. Validate environment secrets are not hardcoded.",
+      "source": "ecc"
+    },
+    {
+      "rank": 9,
+      "topic": "Pre-commit Hooks: dart format + flutter analyze + flutter test",
+      "action": "Configure PostToolUse hooks: auto dart format on .dart save, auto flutter pub get on pubspec.yaml change, auto flutter gen-l10n on .arb change. PreToolUse: warn before firebase deploy, verify signing before release build.",
+      "source": "patterns"
+    },
+    {
+      "rank": 10,
+      "topic": "Permission Allow/Deny for Flutter CLI Commands",
+      "action": "Allow: flutter *, dart *, firebase emulators:*, flutterfire *, pod install, gradlew, adb, dart fix/analyze/format/build_runner. Deny: firebase deploy, firebase delete, flutter build --release, keytool -delete, rm -rf build/.",
+      "source": "patterns"
+    },
+    {
+      "rank": 11,
+      "topic": "Performance Best Practices: const Constructors & Lazy Loading",
+      "action": "Enforce const constructors, localize setState to smallest subtree, use ListView.builder for lists, target 16ms frame budget, avoid Opacity widget (use AnimatedOpacity), minimize saveLayer calls.",
+      "source": "web"
+    },
+    {
+      "rank": 12,
+      "topic": "Flutter 3.41 Breaking Changes & New Features",
+      "action": "Track onReorder deprecation, Dart dot shorthands syntax (3.38), hot reload on web (3.35), Widget Previewer tool. Update project to leverage new features.",
+      "source": "web"
+    },
+    {
+      "rank": 13,
+      "topic": "Search-First: pub.dev Before Custom Code",
+      "action": "Before implementing any feature, search pub.dev for existing packages, Firebase extensions, and community solutions. Research-before-coding workflow.",
+      "source": "ecc"
+    },
+    {
+      "rank": 14,
+      "topic": "Context Budgeting for Flutter Projects",
+      "action": "Minimal system prompt. Load Flutter/Dart conventions as skill on demand. Move widget catalog, design tokens, API schemas to skill files. Compact at phase boundaries (build success, test pass, deploy). Preserve: widget path, failing tests, firebase project ID.",
+      "source": "patterns"
+    },
+    {
+      "rank": 15,
+      "topic": "Observation Format with Flutter Extensions",
+      "action": "Standard 4-field observation (status/summary/next_actions/artifacts) + Flutter extensions: widget_path (MaterialApp > Scaffold > MyWidget), platform_flag (android|ios|web|all), hot_reload_safe (true|false).",
+      "source": "patterns"
+    },
+    {
+      "rank": 16,
+      "topic": "CI/CD & Deployment Patterns for Flutter",
+      "action": "Configure CI/CD pipeline (GitHub Actions, Codemagic, or fastlane). Version bumping in pubspec.yaml. Firebase Hosting/Functions deployment with environment isolation.",
+      "source": "ecc"
+    },
+    {
+      "rank": 17,
+      "topic": "Windows Flutter Development Environment",
+      "action": "Verify flutter doctor setup, ensure Visual Studio 2022 Desktop C++ workload. Firebase supports Windows via firebase_core_desktop. Hot reload works on desktop.",
+      "source": "web"
+    },
+    {
+      "rank": 18,
+      "topic": "Anti-Patterns to Avoid",
+      "action": "No overlapping flutter_test/dart_test tools (one run_tests with platform param). Parse build stderr into structured observation. Don't inline pubspec.lock. Break flutter commands into build/test/analyze/run. Always indicate affected platform(s).",
+      "source": "patterns"
+    }
+  ],
+  "recommended_skills": {
+    "ecc_install": [
+      "tdd",
+      "code-review",
+      "security-review",
+      "plan",
+      "investigate",
+      "verify",
+      "search-first",
+      "ship",
+      "api-design",
+      "deployment-patterns"
+    ],
+    "custom_generate": [
+      {
+        "name": "flutter-tdd",
+        "purpose": "Flutter-specific TDD extending generic tdd skill with widget test, golden test, and integration_test patterns",
+        "sketch": "Wraps the generic tdd skill with Flutter-specific test scaffolding: widget tests using WidgetTester/pumpWidget, unit tests for repositories/viewmodels with mockito, integration_test for E2E flows. Adds golden test support, coverage threshold enforcement via flutter test --coverage, and platform-conditional test selection."
+      },
+      {
+        "name": "flutter-review",
+        "purpose": "Flutter/Dart code review with framework-specific checks beyond generic code-review",
+        "sketch": "Extends code-review with Dart-specific checks: const constructor usage, proper widget decomposition (no giant build methods), correct state management (no setState in StatelessWidget), Riverpod provider scoping, Firebase security rule validation, platform-conditional logic review, and performance anti-pattern detection (Opacity, missing keys in lists)."
+      },
+      {
+        "name": "flutter-verify",
+        "purpose": "Pre-completion verification loop tailored to Flutter projects",
+        "sketch": "Runs dart analyze (zero warnings), dart format --set-exit-if-changed, flutter test --coverage (80%+ gate), flutter build (debug + platform check), pubspec.yaml version consistency, and l10n completeness check. Outputs structured pass/fail report with next_actions."
+      },
+      {
+        "name": "firebase-guard",
+        "purpose": "Safety guard for Firebase operations requiring confirmation",
+        "sketch": "PreToolUse hook that intercepts firebase deploy, firebase functions:delete, firebase firestore:delete, firebase auth:import/export. Shows target project/environment, requires explicit confirmation, logs the operation. Includes rollback hints for each operation type."
+      },
+      {
+        "name": "flutter-arch",
+        "purpose": "Enforce layered MVVM architecture conventions in Flutter projects",
+        "sketch": "Validates directory structure (lib/ui/, lib/data/, lib/di/), checks import boundaries (UI cannot import Firebase directly, must go through repository), verifies Riverpod provider placement, and ensures new files follow naming conventions. Reports violations with fix suggestions."
+      }
+    ]
+  },
+  "architecture": {
+    "pattern": "hybrid",
+    "granularity": {
+      "micro": {
+        "operations": ["firebase deploy", "firebase auth config", "firestore security rules", "app store release", "signing key management", "permission manifest changes", "environment secret injection"],
+        "policy": "Single-action tools with explicit confirmation, rollback hint, and stop condition. Human-in-the-loop required."
+      },
+      "medium": {
+        "operations": ["dart file CRUD", "widget tree search", "pubspec.yaml management", "flutter test", "flutter analyze", "build_runner codegen", "asset management", "firebase emulator interaction"],
+        "policy": "One tool call per logical unit. Deterministic output. Auto-format on save."
+      },
+      "macro": {
+        "operations": ["flutter pub get + build_runner + analyze (cold start)", "full test suite + coverage", "multi-file refactor with dry-run", "l10n arb generation"],
+        "policy": "Batch only when all steps are deterministic. Failure at any step triggers full rollback."
+      }
+    },
+    "observation_format": {
+      "standard_fields": ["status (success|warning|error)", "summary (one-line)", "next_actions (actionable list)", "artifacts (file paths, widget names, test IDs)"],
+      "flutter_extensions": ["widget_path (MaterialApp > Scaffold > MyWidget)", "platform_flag (android|ios|web|all)", "hot_reload_safe (true|false)", "context_hint (build|test|deploy phase)"]
+    },
+    "error_recovery": {
+      "contract": "Every error includes root_cause_hint + safe_retry_instruction + stop_condition",
+      "categories": {
+        "build_failure": "Analyze log -> check pubspec lock -> clean -> rebuild. Stop after 2 cycles.",
+        "runtime_crash": "Check device logs -> isolate widget -> add error boundary. Stop if native code.",
+        "test_failure": "Re-run verbose -> check golden diffs -> update if intentional. Stop if >5 simultaneous failures.",
+        "firebase_error": "Check emulator -> verify config files -> check rules. Stop if auth token expired.",
+        "platform_specific": "Isolate platform -> check native build -> verify plugin compat. Stop if native SDK update needed."
+      }
+    }
+  },
+  "conflicts_resolved": [
+    {
+      "kept": "tdd",
+      "dropped": "tdd-workflow, superpowers:test-driven-development",
+      "reason": "No Dart-specific TDD skill exists. Generic tdd is lightest and most actionable. Custom flutter-tdd will extend it. tdd-workflow is heavier with no added Flutter value."
+    },
+    {
+      "kept": "code-review",
+      "dropped": "simplify, superpowers:requesting-code-review",
+      "reason": "Language-agnostic code-review is the right base for Dart. No Dart-specific reviewer exists in ECC. Custom flutter-review will extend it. simplify is a subset."
+    },
+    {
+      "kept": "verify",
+      "dropped": "verification-loop, superpowers:verification-before-completion",
+      "reason": "verify is lightest pre-completion check. Custom flutter-verify will add Flutter-specific gates. verification-loop is overkill for typical Flutter tasks."
+    },
+    {
+      "kept": "plan",
+      "dropped": "superpowers:writing-plans",
+      "reason": "Most Flutter features are single-screen or single-service scope. plan is sufficient. Escalate to superpowers:writing-plans only for multi-milestone features."
+    },
+    {
+      "kept": "investigate",
+      "dropped": "superpowers:systematic-debugging",
+      "reason": "Flutter errors (MissingPluginException, build failures) typically have clear stack traces. investigate is sufficient. Escalate to systematic-debugging only for hard-to-reproduce race conditions."
+    },
+    {
+      "kept": "e2e (methodology only)",
+      "dropped": "e2e-testing",
+      "reason": "e2e skill uses Playwright (web-only). Flutter uses integration_test package instead. Keep e2e for methodology but actual test execution will use custom flutter-tdd skill with integration_test."
+    },
+    {
+      "kept": "search-first",
+      "dropped": "N/A",
+      "reason": "Critical for Flutter ecosystem. pub.dev has 40k+ packages. Always search before building custom solutions."
+    },
+    {
+      "kept": "coding-standards (deprioritized)",
+      "dropped": "frontend-patterns",
+      "reason": "Both are JS/TS focused. coding-standards has some transferable patterns for Firebase Cloud Functions (Node.js). frontend-patterns is React-specific. Neither is core for Dart/Flutter."
+    },
+    {
+      "kept": "docker-patterns (excluded from install)",
+      "dropped": "N/A",
+      "reason": "Relevance 0.55. Docker is only useful for Firebase emulator CI. Not worth installing as a default skill. Use on-demand if needed."
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "role": "mobile app developer",
+  "stack": ["Flutter", "Dart", "Firebase"],
+  "workflow": ["TDD", "code review"],
+  "constraints": ["Windows development environment"],
+  "generation": 1,
+  "parent_audit": null,
+  "parent_feedback": null,
+  "product_requirement": "사람들이 일상에서 많이 쓸만한 모바일 앱"
+}

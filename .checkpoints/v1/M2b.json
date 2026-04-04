@@ -1,0 +1,95 @@
+{
+  "type": "ecc",
+  "recommended_skills": [
+    {
+      "name": "tdd",
+      "description": "Enforce test-driven development workflow. Scaffold interfaces, generate tests FIRST, then implement minimal code to pass. Ensure 80%+ coverage.",
+      "relevance": 0.95,
+      "reason": "Flutter/Dart TDD with widget tests, unit tests, integration tests. Language-agnostic TDD skill is the best fit since no Dart-specific TDD skill exists."
+    },
+    {
+      "name": "e2e",
+      "description": "Generate and run end-to-end tests with Playwright. Creates test journeys, runs tests, captures screenshots/videos/traces.",
+      "relevance": 0.7,
+      "reason": "Flutter integration testing and UI automation. Playwright itself targets web, but the E2E methodology applies to Flutter driver/integration_test."
+    },
+    {
+      "name": "code-review",
+      "description": "Code Review for general code changes.",
+      "relevance": 0.9,
+      "reason": "Language-agnostic code review applicable to Dart/Flutter PRs. No Dart-specific reviewer exists."
+    },
+    {
+      "name": "security-review",
+      "description": "Comprehensive security checklist for authentication, user input, secrets, API endpoints, and payment features.",
+      "relevance": 0.85,
+      "reason": "Firebase auth, Firestore security rules, API key management, and secure storage are critical in mobile apps."
+    },
+    {
+      "name": "plan",
+      "description": "Restate requirements, assess risks, and create step-by-step implementation plan. WAIT for user CONFIRM before touching any code.",
+      "relevance": 0.85,
+      "reason": "Feature planning for Flutter apps - screen flows, state management, Firebase integration points."
+    },
+    {
+      "name": "api-design",
+      "description": "REST API design patterns including resource naming, status codes, pagination, filtering, error responses, versioning, and rate limiting.",
+      "relevance": 0.8,
+      "reason": "Firebase Cloud Functions REST endpoints, external API integration patterns for mobile clients."
+    },
+    {
+      "name": "investigate",
+      "description": "Systematic debugging with root cause investigation. Four phases: investigate, analyze, hypothesize, implement.",
+      "relevance": 0.85,
+      "reason": "Debugging Flutter widget rendering, state management bugs, Firebase connection issues. Universal debugging methodology."
+    },
+    {
+      "name": "tdd-workflow",
+      "description": "Enforces test-driven development with 80%+ coverage including unit, integration, and E2E tests.",
+      "relevance": 0.8,
+      "reason": "Extended TDD workflow with coverage enforcement. Useful when tdd skill is too lightweight for complex Flutter features."
+    },
+    {
+      "name": "coding-standards",
+      "description": "Universal coding standards, best practices, and patterns for TypeScript, JavaScript, React, and Node.js development.",
+      "relevance": 0.6,
+      "reason": "Some patterns transfer to Dart, but primarily JS/TS focused. Useful for Firebase Cloud Functions (Node.js)."
+    },
+    {
+      "name": "deployment-patterns",
+      "description": "Deployment workflows, CI/CD pipeline patterns, Docker containerization, health checks, rollback strategies.",
+      "relevance": 0.7,
+      "reason": "CI/CD for Flutter builds (fastlane, Codemagic, GitHub Actions), Firebase Hosting/Functions deployment."
+    },
+    {
+      "name": "docker-patterns",
+      "description": "Docker and Docker Compose patterns for local development, container security, networking, and multi-service orchestration.",
+      "relevance": 0.55,
+      "reason": "Docker for Firebase emulator suite, CI build environments for Flutter. Not core mobile dev but useful for local dev setup."
+    },
+    {
+      "name": "frontend-patterns",
+      "description": "Frontend development patterns for React, Next.js, state management, performance optimization, and UI best practices.",
+      "relevance": 0.65,
+      "reason": "State management concepts (BLoC, Riverpod parallels), component composition, and performance optimization transfer to Flutter widget architecture."
+    },
+    {
+      "name": "verify",
+      "description": "Verification command for pre-completion checks.",
+      "relevance": 0.8,
+      "reason": "Pre-commit verification: flutter analyze, flutter test, build checks before declaring work complete."
+    },
+    {
+      "name": "ship",
+      "description": "Ship workflow: merge main, run tests, review diff, bump VERSION, update CHANGELOG, commit, push, create PR.",
+      "relevance": 0.75,
+      "reason": "Release workflow for Flutter apps - version bumping in pubspec.yaml, changelog, PR creation."
+    },
+    {
+      "name": "search-first",
+      "description": "Research-before-coding workflow. Search for existing tools, libraries, and patterns before writing custom code.",
+      "relevance": 0.8,
+      "reason": "Critical for Flutter ecosystem - finding pub.dev packages, Firebase extensions, community solutions before building custom."
+    }
+  ]
+}

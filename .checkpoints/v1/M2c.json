@@ -1,0 +1,163 @@
+{
+  "type": "patterns",
+  "architecture": "hybrid",
+  "architecture_rationale": "Flutter mobile dev involves both exploratory tasks (UI debugging, widget tree inspection, hot-reload iteration) and structured deterministic flows (firebase deploy, build, test, pub get). Hybrid = ReAct planning for exploration + typed tool execution for known workflows.",
+  "granularity": {
+    "high_risk": {
+      "level": "micro",
+      "operations": [
+        "firebase deploy (functions/rules/indexes)",
+        "firebase auth config changes",
+        "firestore security rules update",
+        "play store / app store release",
+        "signing key management",
+        "database migration (Cloud Firestore schema)",
+        "permission manifest changes (AndroidManifest.xml, Info.plist)",
+        "environment secret injection"
+      ],
+      "rationale": "Each operation is irreversible or has blast radius. Single-action tools with explicit confirmation, rollback hint, and stop condition."
+    },
+    "common": {
+      "level": "medium",
+      "operations": [
+        "dart file read/edit/create",
+        "widget tree search (grep for StatefulWidget, StatelessWidget)",
+        "pubspec.yaml dependency management",
+        "flutter test execution",
+        "flutter analyze",
+        "build_runner code generation",
+        "asset management (images, fonts, l10n)",
+        "firebase emulator interaction"
+      ],
+      "rationale": "Standard edit-read-search loops. One tool call per logical unit. Deterministic output shapes."
+    },
+    "batch": {
+      "level": "macro",
+      "operations": [
+        "flutter pub get + build_runner + analyze (cold start pipeline)",
+        "full test suite + coverage report",
+        "multi-file refactor with dry-run preview",
+        "l10n arb generation across all locales"
+      ],
+      "rationale": "Round-trip overhead dominates. Batch only when all steps are deterministic and failure at any step triggers full rollback."
+    }
+  },
+  "observation_format": {
+    "schema": {
+      "status": "success | warning | error",
+      "summary": "one-line human-readable result",
+      "next_actions": ["actionable follow-up 1", "actionable follow-up 2"],
+      "artifacts": ["file paths", "widget names", "test IDs"],
+      "context_hint": "optional: which phase this belongs to (build/test/deploy)"
+    },
+    "flutter_specific_extensions": {
+      "widget_path": "MaterialApp > Scaffold > Column > MyWidget (for UI debugging)",
+      "platform_flag": "android | ios | web | all (for platform-conditional logic)",
+      "hot_reload_safe": "true | false (whether change can hot-reload or needs restart)"
+    },
+    "rationale": "Standard 4-field observation from harness skill + Flutter-specific fields that reduce follow-up questions and enable smarter next_actions."
+  },
+  "error_recovery": {
+    "contract": {
+      "root_cause_hint": "Required. One-line diagnosis. E.g., 'MissingPluginException: firebase_auth not registered on iOS'",
+      "safe_retry_instruction": "Required. Idempotent action. E.g., 'Run flutter clean && flutter pub get && cd ios && pod install'",
+      "stop_condition": "Required. When to escalate. E.g., 'If pod install fails 2x, check Podfile.lock for version conflict'"
+    },
+    "flutter_error_categories": {
+      "build_failure": "Analyze build log -> check pubspec lock -> clean -> rebuild. Stop after 2 clean-rebuild cycles.",
+      "runtime_crash": "Check device logs (flutter logs) -> isolate widget -> add error boundary. Stop if crash is in native code.",
+      "test_failure": "Re-run single test verbose -> check golden diffs -> update goldens if intentional. Stop if >5 tests fail simultaneously.",
+      "firebase_error": "Check emulator status -> verify config files (google-services.json / GoogleService-Info.plist) -> check rules. Stop if auth token expired.",
+      "platform_specific": "Isolate to android/ios -> check native build (gradlew/xcodebuild) -> verify plugin compatibility. Stop if requires native SDK update."
+    },
+    "rationale": "Every error path includes root cause, retry, and stop condition per harness skill contract. Flutter-specific categories prevent generic 'try again' loops."
+  },
+  "recommended_hooks": [
+    {
+      "event": "PreToolUse",
+      "matcher": "Bash",
+      "trigger": "firebase deploy*",
+      "action": "Warn before any firebase deploy. Require explicit confirmation. Show which project/environment is targeted.",
+      "priority": "critical"
+    },
+    {
+      "event": "PostToolUse",
+      "matcher": "Write|Edit",
+      "trigger": "*.dart files",
+      "action": "Run dart format on saved file (async). Similar to existing ruff/prettier hook.",
+      "priority": "high"
+    },
+    {
+      "event": "PostToolUse",
+      "matcher": "Write|Edit",
+      "trigger": "pubspec.yaml",
+      "action": "Auto-run flutter pub get after pubspec changes (async).",
+      "priority": "high"
+    },
+    {
+      "event": "PreToolUse",
+      "matcher": "Bash",
+      "trigger": "flutter build* --release*",
+      "action": "Verify signing config exists and environment matches (dev/staging/prod).",
+      "priority": "high"
+    },
+    {
+      "event": "PostToolUse",
+      "matcher": "Write|Edit",
+      "trigger": "*.arb files",
+      "action": "Auto-run flutter gen-l10n after l10n file changes (async).",
+      "priority": "medium"
+    },
+    {
+      "event": "Stop",
+      "action": "Save session context to Obsidian vault (already configured).",
+      "priority": "existing"
+    },
+    {
+      "event": "SessionStart",
+      "action": "Load Flutter project context: detect pubspec.yaml, check flutter doctor status, identify target platforms.",
+      "priority": "medium"
+    }
+  ],
+  "recommended_permissions": {
+    "allow": [
+      "Bash(flutter *)",
+      "Bash(dart *)",
+      "Bash(firebase emulators:*)",
+      "Bash(firebase use *)",
+      "Bash(flutterfire *)",
+      "Bash(pod install *)",
+      "Bash(gradlew *)",
+      "Bash(adb *)",
+      "Bash(xcrun *)",
+      "Bash(dart fix *)",
+      "Bash(dart analyze *)",
+      "Bash(dart format *)",
+      "Bash(dart run build_runner *)"
+    ],
+    "deny": [
+      "Bash(firebase deploy *)",
+      "Bash(firebase deploy)",
+      "Bash(firebase functions:delete *)",
+      "Bash(firebase firestore:delete *)",
+      "Bash(firebase auth:import *)",
+      "Bash(firebase auth:export *)",
+      "Bash(flutter build * --release *)",
+      "Bash(keytool -delete *)",
+      "Bash(rm -rf build/ *)",
+      "Bash(rm -rf .dart_tool *)"
+    ]
+  },
+  "context_budgeting": {
+    "system_prompt": "Minimal. Flutter/Dart conventions loaded as skill on demand, not inlined.",
+    "large_guidance": "Move widget catalog, design system tokens, and API schemas to skill files. Reference by path.",
+    "compact_strategy": "Compact at phase boundaries: after build success, after test pass, after deploy. Preserve: current widget path, failing test names, firebase project ID."
+  },
+  "anti_patterns_to_avoid": [
+    "Overlapping tools: don't create separate 'flutter_test' and 'dart_test' tools. One 'run_tests' with platform param.",
+    "Opaque build output: always parse flutter build stderr into structured observation with root_cause_hint.",
+    "Context overload: don't inline full pubspec.lock. Reference it by path, read only when resolving dependency conflicts.",
+    "Catch-all 'flutter_command' tool: break into build/test/analyze/run with typed schemas.",
+    "Ignoring platform dimension: every tool output should indicate which platform(s) are affected."
+  ]
+}

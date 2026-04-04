@@ -1,0 +1,100 @@
+{
+  "total_score": 52,
+  "max_score": 70,
+  "passed": false,
+  "categories": {
+    "tool_coverage": {
+      "score": 8,
+      "max": 10,
+      "notes": "Flutter/Dart/Firebase 커맨드 광범위하게 허용. pod install, gradlew, adb, flutterfire, build_runner 포함. flutter gen-l10n, flutter doctor 등 유틸도 포함. 감점: firebase functions:shell, dart devtools 등 개발 도구 누락."
+    },
+    "context_efficiency": {
+      "score": 9,
+      "max": 10,
+      "notes": "CLAUDE.md 54줄로 간결. NEVER/ALWAYS 규칙이 Flutter-specific하고 중복 없음. 스킬 6개로 분리되어 온디맨드 로딩 가능. 감점: CLAUDE.md에 workflow 섹션이 1줄로 너무 압축."
+    },
+    "quality_gates": {
+      "score": 8,
+      "max": 10,
+      "notes": "TDD workflow 명시(RED-GREEN-IMPROVE), flutter-review 스킬+에이전트, flutter-verify 5단계 검증, 80% 커버리지 게이트, pre-commit hook(format+analyze+gitleaks). 감점: integration test 자동화 부재, golden test 워크플로 미구현."
+    },
+    "memory_persistence": {
+      "score": 3,
+      "max": 10,
+      "notes": "SessionStart/Stop hooks 완전 부재. PostToolUse(dart format, pub get, l10n)와 PreToolUse(firebase guard, release guard)만 존재. 세션 간 컨텍스트 유지 메커니즘 없음. CLAUDE.md에 memory/context 관련 언급 없음."
+    },
+    "eval_coverage": {
+      "score": 2,
+      "max": 10,
+      "notes": "eval-harness 스킬 부재. M6 validator가 harness-maker SKILL.md에 설계되어 있으나 독립 eval 스킬로 분리되지 않음. smoke test 설계는 있으나 실제 eval 프레임워크(자동 점수, 회귀 감지) 없음."
+    },
+    "security_guardrails": {
+      "score": 8,
+      "max": 10,
+      "notes": "gitleaks detect 허용+pre-commit hook 포함. deny list 13개(firebase deploy, release build, pub publish, rm -rf 등). firebase-guard 스킬+hook. firebase-security-agent(Firestore rules, Auth config, API keys, Storage rules). 감점: SAST 도구(semgrep 등) 미포함, dependency audit 부재."
+    },
+    "cost_efficiency": {
+      "score": 7,
+      "max": 10,
+      "notes": "에이전트 5개 모두 model: sonnet 지정. async hook으로 병렬 실행. harness-maker DAG에서 병렬 리서치(3개), 병렬 빌드(5개) 설계. 감점: model routing 규칙이 에이전트에만 있고 스킬에는 없음. CLAUDE.md에 model routing 전략 미언급. 단순 Read 작업에 haiku 라우팅 없음."
+    }
+  },
+  "weak_categories": [
+    "memory_persistence",
+    "eval_coverage"
+  ],
+  "issues": [
+    {
+      "severity": "warning",
+      "category": "reference_integrity",
+      "detail": "CLAUDE.md에서 'planner' 에이전트 참조하지만 agents/planner.md 부재. 글로벌 planner에 의존하는 것으로 추정되나 명시적 fallback 없음."
+    },
+    {
+      "severity": "warning",
+      "category": "reference_integrity",
+      "detail": "CLAUDE.md에서 'security-reviewer' 참조하지만 실제 에이전트명은 'firebase-security-agent'. 네이밍 불일치."
+    },
+    {
+      "severity": "critical",
+      "category": "memory_persistence",
+      "detail": "SessionStart/SessionStop hooks 완전 부재. 세션 간 컨텍스트(마지막 작업 파일, 실패 테스트, 아키텍처 결정) 유지 불가."
+    },
+    {
+      "severity": "critical",
+      "category": "eval_coverage",
+      "detail": "eval-harness 스킬 부재. 하네스 품질 자동 측정, 회귀 감지, A/B 비교 불가."
+    },
+    {
+      "severity": "info",
+      "category": "cost_efficiency",
+      "detail": "스킬 SKILL.md에 model 필드 없음. 에이전트만 sonnet 지정. 스킬 실행 시 기본 모델(잠재적 opus) 사용 가능."
+    },
+    {
+      "severity": "info",
+      "category": "tool_coverage",
+      "detail": "dart devtools, firebase functions:shell, firebase functions:log 등 디버깅 도구 미포함."
+    },
+    {
+      "severity": "info",
+      "category": "security_guardrails",
+      "detail": "SAST(semgrep), dependency audit(dart pub outdated --dependency-overrides), license check 미포함."
+    }
+  ],
+  "file_integrity": {
+    "total_files": 23,
+    "missing_references": 2,
+    "json_valid": true,
+    "details": {
+      "claude_md": true,
+      "settings_json": true,
+      "skills": 6,
+      "agents": 5,
+      "commands": 6,
+      "scripts": 6,
+      "harness_maker_bootstrap": true,
+      "all_skills_have_frontmatter": true,
+      "all_agents_have_frontmatter": true,
+      "missing_agent_refs": ["planner", "security-reviewer (name mismatch with firebase-security-agent)"]
+    }
+  }
+}
