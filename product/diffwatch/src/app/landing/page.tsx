@@ -54,6 +54,64 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Product preview — shows what the dashboard looks like */}
+      <section className="px-6 pb-20 max-w-5xl mx-auto">
+        <div className="rounded-xl border border-zinc-800 bg-zinc-900/50 overflow-hidden shadow-2xl shadow-black/50">
+          {/* Fake browser chrome */}
+          <div className="flex items-center gap-2 px-4 py-2.5 border-b border-zinc-800 bg-zinc-900">
+            <div className="flex gap-1.5">
+              <div className="w-2.5 h-2.5 rounded-full bg-zinc-700" />
+              <div className="w-2.5 h-2.5 rounded-full bg-zinc-700" />
+              <div className="w-2.5 h-2.5 rounded-full bg-zinc-700" />
+            </div>
+            <div className="flex-1 mx-4 py-1 px-3 rounded bg-zinc-800 text-[10px] text-zinc-500 text-center">
+              app.diffwatch.dev
+            </div>
+          </div>
+          {/* Mock dashboard */}
+          <div className="p-6">
+            <div className="flex items-center gap-6 mb-6 text-xs text-zinc-500">
+              <span><strong className="text-white text-lg">12</strong> changes detected</span>
+              <span className="h-3 w-px bg-zinc-800" />
+              <span><strong className="text-white text-lg">4</strong> this week</span>
+              <span className="h-3 w-px bg-zinc-800" />
+              <span className="flex gap-1.5">
+                <span className="px-1.5 py-0.5 rounded bg-red-500/20 text-red-300 text-[10px]">pricing 3</span>
+                <span className="px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 text-[10px]">feature 5</span>
+                <span className="px-1.5 py-0.5 rounded bg-zinc-700 text-zinc-400 text-[10px]">copy 4</span>
+              </span>
+            </div>
+            {/* Mock monitors */}
+            <div className="space-y-2">
+              {[
+                { name: "Stripe Pricing", url: "stripe.com/pricing", change: "Pricing change: modified 8 lines", cat: "pricing", dot: "bg-red-500", time: "2h ago" },
+                { name: "Linear Changelog", url: "linear.app/changelog", change: "Feature update: added 12 lines", cat: "feature", dot: "bg-amber-500", time: "6h ago" },
+                { name: "Notion Product", url: "notion.so/product", change: "Content update: modified 3 lines", cat: "copy", dot: "bg-zinc-600", time: "1d ago" },
+              ].map((m) => (
+                <div key={m.name} className="flex items-center gap-3 p-3 rounded-lg border border-zinc-800 bg-zinc-950/50">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-medium text-zinc-200">{m.name}</span>
+                      <span className="text-[10px] text-zinc-600">{m.url}</span>
+                    </div>
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className={`w-1.5 h-1.5 rounded-full ${m.dot}`} />
+                      <span className={`text-[10px] px-1.5 py-0.5 rounded ${
+                        m.cat === "pricing" ? "bg-red-500/20 text-red-300" :
+                        m.cat === "feature" ? "bg-amber-500/20 text-amber-300" :
+                        "bg-zinc-700 text-zinc-400"
+                      }`}>{m.cat}</span>
+                      <span className="text-[10px] text-zinc-500">{m.change}</span>
+                      <span className="text-[10px] text-zinc-700 ml-auto">{m.time}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Social proof bar */}
       <section className="border-y border-zinc-800/50 px-6 py-6">
         <div className="max-w-5xl mx-auto flex items-center gap-8 text-sm text-zinc-500">
