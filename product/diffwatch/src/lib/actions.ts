@@ -7,6 +7,7 @@ import { computeDiff } from "./differ";
 import { requireSession } from "./session";
 import { getPlanConfig } from "./plans";
 import { sendNotifications } from "./notify";
+import { discoverPages } from "./discover";
 import { revalidatePath } from "next/cache";
 
 const createMonitorSchema = z.object({
@@ -62,6 +63,68 @@ export async function createMonitor(data: {
 
   revalidatePath("/");
   return monitor;
+}
+
+export async function discoverCompany(companyName: string) {
+  const session = await requireSession();
+
+  const plan = getPlanConfig(session.plan);
+  const currentCount = await prisma.monitor.count({
+    where: { userId: session.userId },
+  });
+
+  const result = await discoverPages(companyName);
+  const remaining = plan.maxMonitors - currentCount;
+
+  return {
+    baseUrl: result.baseUrl,
+    pages: result.pages.slice(0, remaining),
+    totalFound: result.pages.length,
+    remaining,
+  };
+}
+
+export async function addDiscoveredMonitors(
+  pages: ReadonlyArray<{ url: string; label: string; category: string }>,
+) {
+  const session = await requireSession();
+
+  const plan = getPlanConfig(session.plan);
+  const currentCount = await prisma.monitor.count({
+    where: { userId: session.userId },
+  });
+
+  const remaining = plan.maxMonitors - currentCount;
+  const toAdd = pages.slice(0, remaining);
+
+  const created = [];
+  for (const page of toAdd) {
+    const monitor = await prisma.monitor.create({
+      data: {
+        url: page.url,
+        name: page.label,
+        userId: session.userId,
+      },
+    });
+
+    try {
+      const result = await crawlUrl(monitor.url, null);
+      await prisma.snapshot.create({
+        data: {
+          monitorId: monitor.id,
+          content: result.textContent,
+          hash: result.hash,
+        },
+      });
+    } catch {
+      // Initial snapshot failure — will retry on next check
+    }
+
+    created.push(monitor);
+  }
+
+  revalidatePath("/");
+  return { added: created.length, monitors: created };
 }
 
 export async function getMonitors() {

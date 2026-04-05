@@ -1,4 +1,4 @@
-import { Pool } from "@neondatabase/serverless";
+import pg from "pg";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../generated/prisma/client";
 
@@ -12,7 +12,7 @@ function createPrismaClient(): PrismaClient {
     throw new Error("DATABASE_URL is not set");
   }
 
-  const pool = new Pool({ connectionString });
+  const pool = new pg.Pool({ connectionString, ssl: { rejectUnauthorized: false } });
   const adapter = new PrismaPg(pool);
   return new PrismaClient({ adapter });
 }
