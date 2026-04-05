@@ -20,20 +20,33 @@ interface MonitorItem {
 }
 
 const CATEGORY_COLORS: Record<string, string> = {
-  pricing: "bg-red-500/20 text-red-300 border-red-500/30",
-  feature: "bg-blue-500/20 text-blue-300 border-blue-500/30",
-  copy: "bg-zinc-500/20 text-zinc-300 border-zinc-500/30",
-  design: "bg-purple-500/20 text-purple-300 border-purple-500/30",
-  other: "bg-zinc-500/20 text-zinc-300 border-zinc-500/30",
-};
-
-const IMPORTANCE_DOTS: Record<string, string> = {
-  high: "bg-red-500",
-  medium: "bg-amber-500",
-  low: "bg-zinc-500",
+  pricing: "bg-red-500/15 text-red-400",
+  feature: "bg-blue-500/15 text-blue-400",
+  copy: "bg-zinc-500/15 text-zinc-400",
+  design: "bg-purple-500/15 text-purple-400",
+  other: "bg-zinc-500/15 text-zinc-400",
 };
 
 type CheckFeedback = { changed: boolean } | { error: string };
+
+function getDomain(url: string): string {
+  try {
+    return new URL(url).hostname.replace("www.", "");
+  } catch {
+    return url;
+  }
+}
+
+function timeAgo(date: Date): string {
+  const seconds = Math.floor((Date.now() - new Date(date).getTime()) / 1000);
+  if (seconds < 60) return "just now";
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `${minutes}m ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  return `${days}d ago`;
+}
 
 export function MonitorList({ monitors }: { readonly monitors: readonly MonitorItem[] }) {
   const [pendingIds, setPendingIds] = useState<ReadonlySet<string>>(new Set());
@@ -79,99 +92,124 @@ export function MonitorList({ monitors }: { readonly monitors: readonly MonitorI
 
   if (monitors.length === 0) {
     return (
-      <div className="text-center py-16 text-zinc-500">
-        <p className="text-lg mb-1">No monitors yet</p>
-        <p className="text-sm">Add a URL above to start tracking changes</p>
+      <div className="rounded-lg border border-dashed border-zinc-800 p-10 text-center">
+        <p className="text-zinc-400 text-sm mb-1">No monitors yet</p>
+        <p className="text-zinc-600 text-xs">
+          Enter a company name or URL to start tracking changes.
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-2">
       {monitors.map((m) => {
         const lastChange = m.changes[0];
         const isPending = pendingIds.has(m.id);
         const feedback = checkFeedback[m.id];
+        const domain = getDomain(m.url);
 
         return (
           <div
             key={m.id}
-            className={`rounded-xl border border-zinc-800 bg-zinc-900/30 p-4 hover:border-zinc-700 transition-colors ${isPending ? "opacity-50 pointer-events-none" : ""}`}
+            className={`group rounded-lg border border-zinc-800/80 bg-zinc-900/30 hover:border-zinc-700 transition-all ${isPending ? "opacity-50 pointer-events-none" : ""}`}
           >
-            <div className="flex items-start justify-between gap-3">
-              <Link href={`/monitor/${m.id}`} className="flex-1 min-w-0 group">
-                <div className="flex items-center gap-2">
-                  <h3 className="font-semibold text-zinc-200 truncate group-hover:text-indigo-300 transition-colors">
-                    {m.name}
-                  </h3>
-                  <span className="text-xs text-zinc-600">{m._count.changes} changes</span>
-                </div>
-                <p className="text-xs text-zinc-500 truncate mt-0.5">{m.url}</p>
-              </Link>
-
-              <div className="flex gap-1.5 flex-shrink-0">
-                <button
-                  onClick={() => handleCheck(m.id)}
-                  disabled={isPending}
-                  className="px-3 py-1.5 rounded-lg bg-indigo-500/10 text-indigo-300 text-xs font-medium hover:bg-indigo-500/20 border border-indigo-500/20 transition-colors disabled:opacity-50"
-                >
-                  {isPending ? "..." : "Check now"}
-                </button>
-
-                {deleteConfirmId === m.id ? (
-                  <div className="flex gap-1">
-                    <button
-                      onClick={() => handleDelete(m.id)}
-                      className="px-2 py-1.5 rounded-lg text-red-400 bg-red-500/10 text-xs font-medium border border-red-500/30 hover:bg-red-500/20 transition-colors"
-                    >
-                      Delete
-                    </button>
-                    <button
-                      onClick={() => setDeleteConfirmId(null)}
-                      className="px-2 py-1.5 rounded-lg text-zinc-400 text-xs hover:bg-zinc-800 transition-colors"
-                    >
-                      Cancel
-                    </button>
+            <div className="p-4">
+              {/* Top row: name + domain + actions */}
+              <div className="flex items-center justify-between gap-3 mb-2">
+                <Link href={`/monitor/${m.id}`} className="flex items-center gap-3 min-w-0 flex-1">
+                  {/* Favicon */}
+                  <img
+                    src={`https://www.google.com/s2/favicons?domain=${domain}&sz=32`}
+                    alt=""
+                    width={16}
+                    height={16}
+                    className="shrink-0 rounded-sm"
+                  />
+                  <div className="min-w-0">
+                    <span className="text-sm font-medium text-zinc-200 group-hover:text-white transition-colors">
+                      {m.name}
+                    </span>
+                    <span className="text-xs text-zinc-600 ml-2">{domain}</span>
                   </div>
-                ) : (
+                </Link>
+
+                <div className="flex items-center gap-2 shrink-0">
+                  {m._count.changes > 0 && (
+                    <span className="text-[10px] text-zinc-500 tabular-nums">
+                      {m._count.changes} changes
+                    </span>
+                  )}
                   <button
-                    onClick={() => setDeleteConfirmId(m.id)}
-                    className="px-2 py-1.5 rounded-lg text-zinc-600 hover:text-red-400 hover:bg-red-500/10 transition-colors"
+                    onClick={() => handleCheck(m.id)}
+                    disabled={isPending}
+                    className="px-2.5 py-1 rounded-md bg-zinc-800 text-zinc-400 text-[11px] font-medium hover:bg-zinc-700 hover:text-zinc-200 transition-colors disabled:opacity-50"
                   >
-                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
+                    {isPending ? "..." : "Check"}
                   </button>
-                )}
+
+                  {deleteConfirmId === m.id ? (
+                    <div className="flex gap-1">
+                      <button
+                        onClick={() => handleDelete(m.id)}
+                        className="px-2 py-1 rounded-md text-red-400 bg-red-500/10 text-[11px] font-medium hover:bg-red-500/20 transition-colors"
+                      >
+                        Delete
+                      </button>
+                      <button
+                        onClick={() => setDeleteConfirmId(null)}
+                        className="px-2 py-1 rounded-md text-zinc-500 text-[11px] hover:text-zinc-300 transition-colors"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => setDeleteConfirmId(m.id)}
+                      className="p-1 rounded-md text-zinc-700 hover:text-red-400 hover:bg-red-500/10 transition-colors opacity-0 group-hover:opacity-100"
+                    >
+                      <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  )}
+                </div>
               </div>
+
+              {/* Feedback row */}
+              {feedback && (
+                <div className="mb-2 ml-7">
+                  {"error" in feedback ? (
+                    <span className="text-[11px] text-red-400">Failed: {feedback.error}</span>
+                  ) : feedback.changed ? (
+                    <span className="text-[11px] text-emerald-400">Change detected</span>
+                  ) : (
+                    <span className="text-[11px] text-zinc-600">No changes</span>
+                  )}
+                </div>
+              )}
+
+              {/* Last change row */}
+              {lastChange ? (
+                <div className="flex items-center gap-2 ml-7">
+                  <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${CATEGORY_COLORS[lastChange.category] ?? CATEGORY_COLORS.other}`}>
+                    {lastChange.category}
+                  </span>
+                  <span className="text-[11px] text-zinc-500 truncate flex-1">
+                    {lastChange.summary}
+                  </span>
+                  <span className="text-[10px] text-zinc-700 shrink-0 tabular-nums">
+                    {timeAgo(lastChange.createdAt)}
+                  </span>
+                </div>
+              ) : (
+                <div className="ml-7">
+                  <span className="text-[11px] text-zinc-700">
+                    Added {timeAgo(m.createdAt)} &middot; No changes yet
+                  </span>
+                </div>
+              )}
             </div>
-
-            {feedback && (
-              <div className="mt-2">
-                {"error" in feedback ? (
-                  <span className="text-xs text-red-400">Check failed: {feedback.error}</span>
-                ) : feedback.changed ? (
-                  <span className="text-xs text-emerald-400">Change detected</span>
-                ) : (
-                  <span className="text-xs text-zinc-500">No changes</span>
-                )}
-              </div>
-            )}
-
-            {lastChange && (
-              <div className="mt-3 flex items-center gap-2">
-                <span className={`w-2 h-2 rounded-full ${IMPORTANCE_DOTS[lastChange.importance] ?? IMPORTANCE_DOTS.low}`} />
-                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${CATEGORY_COLORS[lastChange.category] ?? CATEGORY_COLORS.other}`}>
-                  {lastChange.category}
-                </span>
-                <span className="text-xs text-zinc-400 truncate">
-                  {lastChange.summary}
-                </span>
-                <span className="text-[10px] text-zinc-600 ml-auto flex-shrink-0">
-                  {new Date(lastChange.createdAt).toLocaleDateString("ko")}
-                </span>
-              </div>
-            )}
           </div>
         );
       })}
