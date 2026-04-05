@@ -338,7 +338,9 @@ Agent(hm-implementer,
 
 빌드 + 테스트 실행. 실패 시 build-error-resolver로 자동 수정.
 
-### 프로덕트 리뷰 (R4~R9) — 병렬
+### 프로덕트 리뷰 (R4~R13) — 2단계
+
+#### 1단계: 코드 품질 리뷰 (R4~R9) — 병렬
 
 6개 isolated-reviewer를 **동시에** 스폰:
 
@@ -351,7 +353,29 @@ Agent(hm-product-reviewer, review_type=performance,  target_dir=..., design_path
 Agent(hm-product-reviewer, review_type=threat-lens,  target_dir=..., design_path=M12.md, output_path=.checkpoints/product/R9.json)
 ```
 
-6개 리뷰어 모두 완료 대기. **하나라도 미달이면**:
+R4~R9 **전수 통과 후** 2단계로 진행. 미달 시 M17 개선 루프.
+
+#### 2단계: 프로덕션 준비 리뷰 (R10~R13) — 병렬
+
+"코드가 있다 ≠ 작동한다" 를 검증하는 게이트.
+
+```
+Agent(hm-product-reviewer, review_type=deployment,   target_dir=..., design_path=M12.md, output_path=.checkpoints/product/R10.json)
+Agent(hm-product-reviewer, review_type=integration,  target_dir=..., design_path=M12.md, output_path=.checkpoints/product/R11.json)
+Agent(hm-product-reviewer, review_type=e2e,          target_dir=..., design_path=M12.md, output_path=.checkpoints/product/R12.json)
+Agent(hm-product-reviewer, review_type=operational,  target_dir=..., design_path=M12.md, output_path=.checkpoints/product/R13.json)
+```
+
+| 리뷰어 | 검증 대상 | 즉시 FAIL 기준 |
+|--------|----------|---------------|
+| R10 deployment | 배포 설정, 프로덕션 DB, 마이그레이션 | SQLite 사용, 배포 설정 없음 |
+| R11 integration | 결제/이메일/크론 실제 연동 | 빈 API 키, stub 상태 |
+| R12 e2e | 앱 실행 → 가입→핵심기능→결제 플로우 | 앱 시작 불가, 핵심 플로우 에러 |
+| R13 operational | 로깅, health check, rate limiting | 로깅 0개, rate limit 없음 |
+
+R10~R13 **전수 통과해야** 프로덕트 완성. 미달 시 M17 개선 루프.
+
+10개 리뷰어 모두 완료 대기. **하나라도 미달이면**:
 
 ### M17: 개선 → M13 재구현 루프
 
@@ -389,12 +413,16 @@ Agent(hm-deployer,
 - 리뷰 결과:
   | 리뷰어 | 결과 |
   |--------|------|
-  | QA | PASS |
-  | 보안 | PASS |
-  | 디자인 | PASS |
-  | 코드 | PASS (87%) |
-  | 퍼포먼스 | PASS |
-  | threat-lens | PASS |
+  | R4 QA | PASS |
+  | R5 보안 | PASS |
+  | R6 디자인 | PASS |
+  | R7 코드 | PASS (87%) |
+  | R8 퍼포먼스 | PASS |
+  | R9 threat-lens | PASS |
+  | R10 배포 | PASS |
+  | R11 연동 | PASS |
+  | R12 E2E | PASS |
+  | R13 운영 | PASS |
 
 ## 산출물
 - 하네스: <target>/.claude/
@@ -409,5 +437,5 @@ Agent(hm-deployer,
 
 - 각 에이전트 실패: 최대 2회 재시도
 - 체크포인트에서 복구: 마지막 성공 마일스톤부터 재개
-- 리뷰 루프 한도: 설계 2회, 프로덕트 3회
+- 리뷰 루프 한도: 설계 2회, 코드리뷰(R4-R9) 3회, 프로덕션준비(R10-R13) 3회
 - 전체 파이프라인 실패: 사용자에게 알리고 체크포인트 상태 보고

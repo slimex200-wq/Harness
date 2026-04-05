@@ -28,7 +28,7 @@ C:\Users\slime\Harness\
 │   │   ├── hm-designer.md        #   M12: 설계
 │   │   ├── hm-design-reviewer.md #   R1-R3: 설계 리뷰
 │   │   ├── hm-implementer.md     #   M13: 구현
-│   │   ├── hm-product-reviewer.md#   R4-R9: 프로덕트 리뷰
+│   │   ├── hm-product-reviewer.md#   R4-R13: 프로덕트 리뷰 (10관점)
 │   │   └── hm-deployer.md        #   M16: 배포
 │   └── commands/
 │       └── harness-maker.md      # /harness-maker 커맨드
@@ -195,7 +195,7 @@ C:\Users\slime\Harness\
      │  빌드 + 테스트 + 린트
      │  실패 → build-error-resolver 자동 수정
      ▼
-  R4-R9 프로덕트 리뷰 ── 병렬 6개 (isolated-reviewer) ──
+  R4-R9 코드 품질 리뷰 ── 병렬 6개 (isolated-reviewer) ──
      │       │       │       │       │       │
      ▼       ▼       ▼       ▼       ▼       ▼
     R4      R5      R6      R7      R8      R9
@@ -204,6 +204,22 @@ C:\Users\slime\Harness\
      │       │       │       │       │       │
      └───────┴───────┴───────┴───────┴───────┘
      │  미달 → M17(개선) → M13 재구현 (최대 3회)
+     │  전수 통과 시 ↓
+     ▼
+  R10-R13 프로덕션 준비 리뷰 ── 병렬 4개 ──────────
+     │           │           │           │
+     ▼           ▼           ▼           ▼
+    R10         R11         R12         R13
+    배포         연동         E2E         운영
+    가능성       검증         플로우       준비
+    ─────       ─────       ─────       ─────
+    배포설정     결제/이메일   앱 실행+     로깅/헬스
+    프로덕션DB   크론 실연동   핵심플로우   Rate limit
+    env 문서화   stub=FAIL    실제 테스트  에러 추적
+     │           │           │           │
+     └───────────┴───────────┴───────────┘
+     │  미달 → M17(개선) → M13 재구현 (최대 3회)
+     │  전수 통과 시 ↓
      ▼
   M16 배포
      │  프로덕션 빌드 + 최종 스모크 + 완료 리포트
