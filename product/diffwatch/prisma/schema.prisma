@@ -4,29 +4,57 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
+}
+
+model User {
+  id                   String    @id @default(cuid())
+  email                String    @unique
+  passwordHash         String
+  name                 String?
+  plan                 String    @default("free")
+  emailVerified        Boolean   @default(false)
+  verificationToken    String?   @unique
+  resetToken           String?   @unique
+  resetTokenExpiresAt  DateTime?
+  stripeCustomerId     String?   @unique
+  stripeSubscriptionId String?
+  monitors             Monitor[]
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  @@index([email])
+  @@index([stripeCustomerId])
 }
 
 model Monitor {
-  id          String     @id @default(cuid())
-  url         String
-  name        String
-  selector    String?
-  interval    String     @default("daily")
-  active      Boolean    @default(true)
-  snapshots   Snapshot[]
-  changes     Change[]
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+  id         String     @id @default(cuid())
+  url        String
+  name       String
+  selector   String?
+  interval   String     @default("daily")
+  active     Boolean    @default(true)
+  webhookUrl String?
+  userId     String
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  snapshots  Snapshot[]
+  changes    Change[]
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+
+  @@index([userId])
+  @@index([active])
 }
 
 model Snapshot {
-  id         String   @id @default(cuid())
-  monitorId  String
-  monitor    Monitor  @relation(fields: [monitorId], references: [id], onDelete: Cascade)
-  content    String
-  hash       String
-  createdAt  DateTime @default(now())
+  id        String   @id @default(cuid())
+  monitorId String
+  monitor   Monitor  @relation(fields: [monitorId], references: [id], onDelete: Cascade)
+  content   String
+  hash      String
+  createdAt DateTime @default(now())
+
+  @@index([monitorId, createdAt(sort: Desc)])
 }
 
 model Change {
@@ -37,5 +65,16 @@ model Change {
   summary    String
   diff       String
   importance String   @default("low")
+  notified   Boolean  @default(false)
   createdAt  DateTime @default(now())
+
+  @@index([monitorId, createdAt(sort: Desc)])
+  @@index([createdAt])
+}
+
+model RateLimit {
+  id        String   @id
+  count     Int      @default(0)
+  windowEnd DateTime
+  createdAt DateTime @default(now())
 }

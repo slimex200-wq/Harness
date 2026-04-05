@@ -34,10 +34,16 @@ export default function LandingPage() {
 
           <div className="mt-12 flex flex-col sm:flex-row gap-4 justify-center">
             <Link
-              href="/"
+              href="/auth/register"
               className="inline-flex items-center justify-center rounded-xl bg-indigo-500 px-8 py-3.5 text-base font-semibold text-white shadow-lg shadow-indigo-500/25 hover:bg-indigo-400 transition-all"
             >
               Start tracking for free
+            </Link>
+            <Link
+              href="/auth/login"
+              className="inline-flex items-center justify-center rounded-xl border border-zinc-700 px-8 py-3.5 text-base font-semibold text-zinc-300 hover:border-zinc-500 transition-all"
+            >
+              Sign in
             </Link>
           </div>
 

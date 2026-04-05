@@ -3,10 +3,15 @@
 import { useState, useTransition } from "react";
 import { createMonitor } from "@/lib/actions";
 
-export function AddMonitorForm() {
+export function AddMonitorForm({
+  planHasWebhook,
+}: {
+  readonly planHasWebhook: boolean;
+}) {
   const [url, setUrl] = useState("");
   const [name, setName] = useState("");
   const [selector, setSelector] = useState("");
+  const [webhookUrl, setWebhookUrl] = useState("");
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState("");
 
@@ -21,10 +26,12 @@ export function AddMonitorForm() {
           url: url.trim(),
           name: name.trim(),
           selector: selector.trim() || undefined,
+          webhookUrl: webhookUrl.trim() || undefined,
         });
         setUrl("");
         setName("");
         setSelector("");
+        setWebhookUrl("");
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed");
       }
@@ -65,6 +72,15 @@ export function AddMonitorForm() {
         onChange={(e) => setSelector(e.target.value)}
         className="w-full px-4 py-2 rounded-lg bg-zinc-900/50 border border-zinc-800/50 text-xs text-zinc-400 placeholder:text-zinc-600 focus:outline-none focus:ring-1 focus:ring-indigo-500"
       />
+      {planHasWebhook && (
+        <input
+          type="url"
+          placeholder="Webhook URL for alerts (Slack/Discord, optional)"
+          value={webhookUrl}
+          onChange={(e) => setWebhookUrl(e.target.value)}
+          className="w-full px-4 py-2 rounded-lg bg-zinc-900/50 border border-zinc-800/50 text-xs text-zinc-400 placeholder:text-zinc-600 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+        />
+      )}
       {error && (
         <p className="text-xs text-red-400 px-1">{error}</p>
       )}
