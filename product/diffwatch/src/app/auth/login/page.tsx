@@ -26,11 +26,24 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4">
+    <div className="min-h-screen flex">
+      {/* Left panel — branding */}
+      <div className="hidden lg:flex lg:w-1/2 bg-zinc-900 items-center justify-center p-12">
+        <div className="max-w-sm">
+          <h2 className="text-2xl font-bold text-white mb-3">DiffWatch</h2>
+          <p className="text-zinc-400 text-sm leading-relaxed">
+            Know when competitors change their pricing, launch features,
+            or shift positioning. Before they tell the market — you already know.
+          </p>
+        </div>
+      </div>
+
+      {/* Right panel — form */}
+      <div className="flex-1 flex items-center justify-center px-6">
       <div className="w-full max-w-sm">
-        <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-white">DiffWatch</h1>
-          <p className="text-sm text-zinc-500 mt-1">Sign in to your account</p>
+        <div className="mb-8">
+          <h1 className="text-xl font-bold text-white">Sign in</h1>
+          <p className="text-sm text-zinc-500 mt-1">Enter your credentials to continue</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -82,6 +95,7 @@ export default function LoginPage() {
             Forgot password?
           </Link>
         </div>
+      </div>
       </div>
     </div>
   );
