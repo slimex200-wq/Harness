@@ -1,0 +1,87 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm *)",
+      "Bash(npx *)",
+      "Bash(node *)",
+      "Bash(npx eslint *)",
+      "Bash(npx prettier *)",
+      "Bash(npx vitest *)",
+      "Bash(npx prisma *)",
+      "Bash(npx next *)",
+      "Bash(npx playwright *)",
+      "Bash(npx tsc *)",
+      "Bash(npm run build)",
+      "Bash(npm run dev)",
+      "Bash(npm run test *)",
+      "Bash(npm run lint)",
+      "Bash(gitleaks detect *)"
+    ],
+    "deny": [
+      "Bash(npm publish *)",
+      "Bash(npx prisma migrate deploy *)",
+      "Bash(rm -rf node_modules/)",
+      "Bash(rm -rf .next/)",
+      "Bash(rm -rf prisma/*.db)",
+      "Bash(git push --force *)",
+      "Bash(git push -f *)",
+      "Bash(npx prisma db push *)"
+    ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/scripts/session-start.sh",
+            "timeout": 10000,
+            "statusMessage": "이전 세션 상태 로드 중..."
+          }
+        ]
+      }
+    ],
+    "SessionStop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/scripts/session-stop.sh",
+            "timeout": 30000,
+            "statusMessage": "세션 상태 저장 중..."
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -c 'FILEPATH=\"$CLAUDE_FILE_PATH\"; if [[ \"$FILEPATH\" == *.ts || \"$FILEPATH\" == *.tsx || \"$FILEPATH\" == *.js || \"$FILEPATH\" == *.jsx ]]; then npx prettier --write \"$FILEPATH\" 2>/dev/null || true; fi'",
+            "async": true,
+            "statusMessage": "prettier 자동 적용 중..."
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -c 'INPUT=$(cat); CMD=$(echo \"$INPUT\" | jq -r \".tool_input.command // empty\"); if echo \"$CMD\" | grep -qiE \"npm\\s+publish|prisma\\s+migrate\\s+deploy|git\\s+push\\s+(-f|--force)\"; then echo \"BLOCKED: Production operation requires explicit user confirmation.\"; exit 1; fi'",
+            "statusMessage": "프로덕션 작업 가드 체크 중..."
+          }
+        ]
+      }
+    ]
+  },
+  "env": {
+    "COVERAGE_THRESHOLD": "80",
+    "DEFAULT_REVIEW_MODEL": "haiku",
+    "DEFAULT_BUILD_MODEL": "sonnet"
+  }
+}

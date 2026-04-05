@@ -1,0 +1,37 @@
+{
+  "total_score": 65,
+  "max_score": 70,
+  "passed": true,
+  "round": 2,
+  "categories": {
+    "tool_coverage": { "score": 9, "max": 10 },
+    "context_efficiency": { "score": 9, "max": 10 },
+    "quality_gates": { "score": 9, "max": 10 },
+    "memory_persistence": { "score": 10, "max": 10 },
+    "eval_coverage": { "score": 9, "max": 10 },
+    "security_guardrails": { "score": 9, "max": 10 },
+    "cost_efficiency": { "score": 10, "max": 10 }
+  },
+  "weak_categories": [],
+  "issues": [
+    {
+      "severity": "info",
+      "category": "quality_gates",
+      "detail": "pre-commit-hook.sh orphaned — settings.json에 미등록"
+    },
+    {
+      "severity": "info",
+      "category": "context_efficiency",
+      "detail": "harness-maker SKILL.md 320줄 — 프로덕트 파이프라인 분리 가능"
+    }
+  ],
+  "v1_comparison": {
+    "tool_coverage": { "v1": 8, "v2": 9, "delta": 1 },
+    "context_efficiency": { "v1": 9, "v2": 9, "delta": 0 },
+    "quality_gates": { "v1": 8, "v2": 9, "delta": 1 },
+    "memory_persistence": { "v1": 3, "v2": 10, "delta": 7 },
+    "eval_coverage": { "v1": 2, "v2": 9, "delta": 7 },
+    "security_guardrails": { "v1": 8, "v2": 9, "delta": 1 },
+    "cost_efficiency": { "v1": 7, "v2": 10, "delta": 3 }
+  }
+}

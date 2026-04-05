@@ -1,0 +1,45 @@
+{
+  "milestone": "M3",
+  "generation": 2,
+  "status": "completed",
+  "timestamp": "2026-04-05T12:10:00Z",
+  "curated_insights": {
+    "memory_persistence": {
+      "priority": "P0",
+      "actions": [
+        "SessionStart hook: load session-state.json + flutter doctor/test/analyze snapshot",
+        "SessionStop hook: save git diff stat, coverage, lint, active task, unfinished items",
+        "Schema: session-state.json (last_session + history[5])",
+        "Source: ECC reference impl (hooks/memory-persistence/)"
+      ]
+    },
+    "eval_coverage": {
+      "priority": "P0",
+      "actions": [
+        "New flutter-eval skill: 7-category rubric (code + model graders)",
+        "Code graders: dart analyze, flutter test --coverage, flutter build, gitleaks",
+        "Model graders (haiku): arch compliance, code quality",
+        "Baseline + history tracking in .claude/evals/",
+        "Regression detection: compare against parent scores"
+      ]
+    },
+    "cost_efficiency": {
+      "priority": "P1",
+      "actions": [
+        "4/5 agents to haiku (firebase-security, flutter-arch, flutter-review, flutter-verify)",
+        "build-error-resolver stays sonnet (needs Edit tool)",
+        "New planner-agent on haiku",
+        "Model routing policy in CLAUDE.md"
+      ]
+    },
+    "bug_fixes": [
+      "Create planner-agent.md (haiku, Read/Grep/Glob)",
+      "CLAUDE.md: security-reviewer → firebase-security-agent",
+      "Add commands: dart devtools, firebase functions:shell/log, semgrep, dart pub outdated",
+      "Integration test + golden test workflows in flutter-tdd",
+      "Semgrep SAST + dep audit in flutter-verify + security-scan.sh"
+    ]
+  },
+  "skills_included": ["eval-harness-pattern", "strategic-compact-pattern", "cost-aware-routing"],
+  "skills_excluded": ["continuous-learning-v2 (build-time)", "verification-loop (flutter-verify covers)", "harness-optimizer (not installed)"]
+}

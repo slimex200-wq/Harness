@@ -1,0 +1,10 @@
+{
+  "role": "fullstack web developer",
+  "stack": ["TypeScript", "Next.js", "React", "Tailwind CSS", "Prisma", "SQLite"],
+  "workflow": ["TDD", "code review"],
+  "constraints": ["Windows development environment", "No Docker", "Local SQLite for simplicity"],
+  "generation": 1,
+  "parent_audit": null,
+  "parent_feedback": null,
+  "bootstrapped_from": "v2-flutter-harness (65/70)"
+}
