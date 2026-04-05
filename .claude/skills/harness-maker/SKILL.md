@@ -225,15 +225,73 @@ generation 번호를 증가시키고 새 체크포인트 디렉토리 생성.
 
 ---
 
-## 프로덕트 파이프라인 (M11~M17)
+## 프로덕트 파이프라인 (PD → M11~M17)
 
 하네스가 완성(63/70+)되면, 그 하네스를 활용하여 실제 프로덕트를 자동 생성한다.
+
+### PD: Product Discovery (사용자 요구가 모호할 때 자동 실행)
+
+사용자 입력이 구체적 프로덕트 명세가 아닌 경우 (예: "수익성 있는 거 만들어줘", "일상에서 쓸 앱 만들어줘") PD 단계를 자동 실행한다.
+
+```
+Agent(hm-product-discoverer,
+  user_input=<모호한 요구사항>,
+  profile=<하네스 프로필>,
+  available_stack=<M0 환경 감지 결과>,
+  output_path=.checkpoints/product/PD.md
+)
+```
+
+#### PD 프로세스
+
+**PD-1: 트렌드 리서치** (병렬 3개)
+- WebSearch: "trending SaaS ideas 2026", "micro-SaaS revenue", "indie hacker products"
+- WebSearch: 사용자의 스택에 맞는 성공 사례 조사
+- WebSearch: Product Hunt, Hacker News 최근 런칭 중 revenue 공개된 것
+
+**PD-2: 후보 생성** (5개)
+각 후보에 대해:
+- 문제 정의: 누구의 어떤 문제를 푸는가
+- 시장 크기: TAM/SAM 추정
+- 경쟁 현황: 기존 대안 + 차별점
+- 수익 모델: 어떻게 돈을 버는가
+- 구현 난이도: 현재 스택으로 MVP까지 걸리는 시간
+- 야심도 점수: (시장크기 x 차별화 x 수익잠재력) / 구현난이도
+
+**PD-3: 평가 + 선택**
+후보 5개를 야심도 점수로 랭킹.
+1위 선택. 선택 근거를 문서화.
+
+**PD 판정 기준** (안전한 걸 고르지 않기 위한 규칙):
+- "URL 단축기", "메모 앱", "투두 앱" 등 commodity 제품은 야심도 0점
+- 기존 제품의 단순 클론은 야심도 0점
+- AI/자동화를 핵심에 활용하는 제품에 가산점
+- 네트워크 효과 또는 데이터 해자가 있으면 가산점
+- 월 반복 매출(MRR) 모델이면 가산점
+
+#### PD 출력
+
+```markdown
+# Product Discovery Report
+
+## 선택: [제품명]
+- 문제: ...
+- 대상: ...
+- 차별점: ...
+- 수익 모델: ...
+- 야심도: X/10
+
+## 탈락 후보
+1. [후보2] - 탈락 사유
+2. [후보3] - 탈락 사유
+...
+```
 
 ### M11: 기획
 
 ```
 Agent(hm-planner,
-  requirement=<사용자 프로덕트 요구사항>,
+  requirement=<PD 결과 또는 사용자 구체적 요구사항>,
   profile=<하네스 프로필>,
   output_path=.checkpoints/product/M11.md
 )

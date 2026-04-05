@@ -6,3 +6,10 @@ product/daily-loop-web/node_modules/
 product/daily-loop-web/.next/
 product/daily-loop-web/dev.db
 product/daily-loop-web/src/generated/
+product/diffwatch/node_modules/
+product/diffwatch/.next/
+product/diffwatch/dev.db
+product/diffwatch/src/generated/
+product/shorly/
+website/node_modules/
+website/.next/
