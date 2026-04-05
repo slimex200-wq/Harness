@@ -1,0 +1,43 @@
+{
+  "review_type": "feasibility",
+  "passed": true,
+  "issues": [
+    {
+      "severity": "major",
+      "location": "pubspec.yaml (line 661)",
+      "issue": "build_runner가 dev_dependencies에 두 번 선언되어 있음 (line 654, 661). YAML 파서에 따라 키 충돌이 발생하거나 무시될 수 있으며, 빌드 단계에서 예기치 않은 에러를 유발할 수 있음.",
+      "suggestion": "중복된 build_runner 항목 제거. 하나만 남기면 됨."
+    },
+    {
+      "severity": "minor",
+      "location": "Section 10.1 - streak_calculator.dart",
+      "issue": "firstWhereOrNull 메서드는 collection 패키지에서 제공하나, pubspec.yaml에 collection 패키지가 명시적으로 선언되지 않음. Flutter SDK에 transitive dependency로 포함되지만, 명시적 import 경로가 불명확함.",
+      "suggestion": "collection 패키지를 pubspec.yaml에 명시적으로 추가하거나, 순수 Dart로 대체 (where + firstOrNull 조합)."
+    },
+    {
+      "severity": "minor",
+      "location": "Section 10.1 - streak_calculator.dart",
+      "issue": "customDays 매핑에서 date.weekday % 7을 사용하는데, Dart의 DateTime.weekday는 1(월)~7(일)이므로 7%7=0이 일요일이 됨. 그러나 Firestore 스키마에서 customDays는 [0,1,2,3,4,5,6] (월=0, 일=6)으로 정의됨. 7%7=0은 월요일이 아니라 일요일에 대응해야 하는데, 현재 매핑이 불일치함.",
+      "suggestion": "customDays 인덱싱을 (date.weekday - 1)로 변경하여 월=0, 일=6 매핑과 일치시키거나, Firestore 스키마의 요일 정의를 Dart weekday에 맞게 1-based로 변경."
+    },
+    {
+      "severity": "minor",
+      "location": "Section 6 - Dependencies",
+      "issue": "flutter_lints: ^5.0.0으로 되어 있으나, 공식 패키지 이름은 flutter_lints가 아닌 flutter_lints(deprecated) 또는 flutter_lints -> lints 전환 시기. 현재 Flutter 권장은 analysis_options.yaml에서 flutter_lints 대신 lints 패키지 또는 very_good_analysis 사용.",
+      "suggestion": "flutter_lints가 여전히 동작하므로 blocking은 아니지만, 최신 관행에 맞게 검토 필요."
+    },
+    {
+      "severity": "minor",
+      "location": "Section 2.1 - Data Model",
+      "issue": "Firestore Security Rules 파일(firestore.rules)이 파일 구조에 명시되어 있지만, 실제 규칙 내용이 문서에 포함되지 않음. 인증된 사용자만 자신의 데이터에 접근할 수 있는 규칙이 필수적임.",
+      "suggestion": "Firestore Security Rules 예시를 문서에 추가 (match /users/{uid} { allow read, write: if request.auth.uid == uid; })."
+    },
+    {
+      "severity": "minor",
+      "location": "Section 4.5 - Settings Screen",
+      "issue": "flutter_local_notifications 패키지가 의존성에 포함되어 있지만, 알림 기능의 구현 상세(FCM vs 로컬, 권한 요청 플로우, 시간 기반 트리거)가 문서에 부족함. 특히 Android 13+ POST_NOTIFICATIONS 권한 처리가 필요함.",
+      "suggestion": "알림 구현 섹션을 추가하거나, M4(품질 개선)에서 상세 설계를 별도 진행한다고 명시."
+    }
+  ],
+  "summary": "Flutter + Dart + Firebase 스택으로 모든 기능 구현 가능. 아키텍처(MVVM + Riverpod + GoRouter)는 검증된 조합이며, 데이터 모델은 요구사항을 충분히 지원함. 주요 외부 의존성(firebase_core, cloud_firestore, firebase_auth, google_sign_in, flutter_riverpod, go_router, freezed)은 모두 안정적이고 활발히 유지보수됨. 테스트 전략은 fake_cloud_firestore + firebase_auth_mocks + mockito로 80%+ 커버리지 달성 가능. Critical blocker 없음. Major 1건(pubspec.yaml 중복 선언)은 빌드 실패를 유발할 수 있으므로 구현 전 수정 필요. Minor 5건은 구현 중 자연스럽게 해결 가능한 수준."
+}

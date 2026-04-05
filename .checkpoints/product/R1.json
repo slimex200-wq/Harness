@@ -1,0 +1,43 @@
+{
+  "review_type": "architecture",
+  "passed": true,
+  "issues": [
+    {
+      "severity": "major",
+      "location": "di/providers.dart - todayCheckProvider",
+      "issue": "DateTime.now()가 Provider 내부에서 직접 호출됨. todayCheckProvider가 생성 시점의 날짜로 고정되어, 자정을 넘기면 날짜가 갱신되지 않는다. 앱을 백그라운드에 두고 다음날 열면 어제 날짜의 체크를 구독하게 된다.",
+      "suggestion": "별도의 todayDateProvider를 만들고 AppLifecycleObserver에서 resumed 시 invalidate하거나, Timer로 자정에 자동 갱신. todayCheckProvider는 이 provider를 watch하도록 변경."
+    },
+    {
+      "severity": "minor",
+      "location": "di/providers.dart - ViewModel providers",
+      "issue": "ViewModel이 Ref를 직접 받아 내부에서 다른 provider를 watch/read한다. 이는 ViewModel이 Riverpod에 강결합되어 단위 테스트 시 ProviderContainer가 필요해진다.",
+      "suggestion": "ViewModel 생성자에서 Repository 인터페이스를 직접 주입받도록 변경. ref.watch는 Provider 선언부에서만 사용. 테스트에서 mock repository를 직접 전달 가능해진다."
+    },
+    {
+      "severity": "minor",
+      "location": "data/dto/habit_dto.dart - HabitFrequency.values.byName(frequency)",
+      "issue": "Firestore에 잘못된 frequency 문자열이 저장되어 있으면 byName이 ArgumentError를 던진다. DTO -> Entity 변환 시 방어 코드가 없다.",
+      "suggestion": "switch + default 패턴으로 알 수 없는 값을 HabitFrequency.daily로 폴백하거나, AppException으로 래핑하여 에러 계층 전략과 일관되게 처리."
+    },
+    {
+      "severity": "minor",
+      "location": "core/utils/streak_calculator.dart - _isScheduledDay",
+      "issue": "customDays에서 date.weekday % 7을 사용하는데, Dart의 weekday는 월=1 ~ 일=7이므로 일요일이 7%7=0이 된다. Firestore 스키마 주석에는 월=0, 일=6으로 정의되어 있어 weekday 매핑이 불일치한다. 월요일은 1%7=1인데 스키마에서는 0이어야 한다.",
+      "suggestion": "명시적 매핑 함수를 만들어 Dart weekday(1-7)를 스키마 요일(0-6, 월=0)로 변환. 예: (date.weekday - 1) 또는 별도 enum 사용."
+    },
+    {
+      "severity": "minor",
+      "location": "pubspec.yaml",
+      "issue": "build_runner가 dev_dependencies에 두 번 선언되어 있다 (line 654, 661). pubspec 파싱 시 후자가 전자를 덮어쓰지만, 혼란을 유발한다.",
+      "suggestion": "중복 build_runner 선언 제거."
+    },
+    {
+      "severity": "minor",
+      "location": "domain/entity/habit_stats.dart",
+      "issue": "HabitStats가 Entity로 정의되어 있지만 Firestore에 대응하는 컬렉션이 없다. 이 값은 checks 데이터로부터 클라이언트에서 계산되는 파생 모델인데, domain/entity에 위치하면 persist 대상으로 오해할 수 있다.",
+      "suggestion": "domain/model/ 또는 domain/value/ 디렉토리로 분리하거나, 주석으로 computed model임을 명시."
+    }
+  ],
+  "summary": "MVVM + Repository + Riverpod 구조는 이 규모의 Flutter 앱에 적합하다. 순환 의존성 없음, 계층 경계 명확, 데이터 흐름 단방향. 단, todayCheckProvider의 DateTime.now() 하드코딩이 자정 전환 시 버그를 유발하는 major 이슈. 나머지는 weekday 매핑 불일치, DTO 방어 코드 부재, pubspec 중복 등 minor 수준. 통과 기준 충족 (critical 0, major 1)."
+}

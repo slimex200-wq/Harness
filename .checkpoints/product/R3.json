@@ -1,0 +1,43 @@
+{
+  "review_type": "scope",
+  "passed": true,
+  "issues": [
+    {
+      "severity": "major",
+      "location": "Section 3 (File Structure) + Section 4 (Stats Screen) + Section 6 (Dependencies)",
+      "issue": "Should Have (S1, S2, S3, S4, S5) 기능이 모두 설계에 포함되어 있음. PRD 마일스톤에서는 M3(시각화)~M4(품질 개선)에 배치했지만, 설계 문서가 Must Have와 Should Have를 동일 수준으로 설계함. 월간 히트맵, 드래그 정렬, 다크 모드, 통계 화면, 로컬 알림이 모두 포함. MVP 범위를 넘어 초기 배포 리스크 증가.",
+      "suggestion": "Must Have(M1-M7)만으로 첫 빌드를 완성한 뒤, Should Have를 후속 마일스톤으로 분리. 설계 문서에 'MVP scope'와 'Post-MVP scope' 경계를 명시."
+    },
+    {
+      "severity": "minor",
+      "location": "Section 2.3 (HabitDto) + Section 3 (File Structure)",
+      "issue": "DTO 클래스가 수동 fromFirestore/toFirestore를 구현. json_serializable이 dev_dependencies에 있으나 DTO에서 사용하지 않음. freezed Entity와 수동 DTO가 공존하여 보일러플레이트 증가.",
+      "suggestion": "json_serializable을 DTO에도 적용하거나, 사용하지 않으면 의존성에서 제거. 또는 Entity에 직접 fromJson/toJson을 붙여 DTO 계층 제거 검토."
+    },
+    {
+      "severity": "minor",
+      "location": "Section 6 (pubspec.yaml)",
+      "issue": "build_runner가 dev_dependencies에 두 번 선언되어 있음 (freezed codegen용 + mockito codegen용).",
+      "suggestion": "중복 선언 제거. pubspec.yaml에서 한 번만 선언."
+    },
+    {
+      "severity": "minor",
+      "location": "Section 3 (File Structure) - domain/",
+      "issue": "UseCase 계층이 '선택적'으로 언급되었으나 실제 설계에 포함되지 않음. Repository를 ViewModel이 직접 호출하는 구조. UseCase 없이 진행하는 것은 이 규모에 적절하나, 설계 문서에서 '선택적' 표현이 모호.",
+      "suggestion": "'UseCase 미사용'으로 명확히 결정을 기록. 이 규모에서는 UseCase 불필요."
+    },
+    {
+      "severity": "minor",
+      "location": "Section 5 (Navigation) - MainShell",
+      "issue": "MainShell 위젯이 ui/shared/에 배치. 이 위젯은 앱 전체 레이아웃 책임인데 shared/(재사용 위젯 모음)에 있으면 의미가 혼재.",
+      "suggestion": "ui/shell/ 또는 ui/app/ 디렉토리로 분리하거나, router/ 아래에 배치."
+    },
+    {
+      "severity": "minor",
+      "location": "Section 10.1 (StreakCalculator)",
+      "issue": "calculateCurrentStreak에서 checks 리스트를 순차 탐색(firstWhereOrNull). 장기 사용자의 경우 checks 리스트가 길어지면 O(n*m) 성능 문제 가능.",
+      "suggestion": "checks를 Map<String, DailyCheck>으로 변환 후 O(1) 조회. 또는 getChecksInRange로 필요한 범위만 쿼리."
+    }
+  ],
+  "summary": "Must Have(M1-M7) 기능은 모두 설계에 빠짐없이 커버됨. PRD 데이터 모델, Firestore 구조, Security Rules가 정확히 반영됨. 파일 수는 약 50개(lib + test)로 습관 추적 앱 규모에 적절. MVVM + Repository 패턴은 깔끔하고 각 컴포넌트 책임이 단일함. 주요 리스크는 Should Have 전체가 MVP 설계에 포함되어 초기 범위가 넓다는 점. Could Have(C1-C4)는 올바르게 제외됨. YAGNI 위반은 없음 — 불필요한 추상화(UseCase 등)를 적절히 생략함. Critical 이슈 없음, Major 1건(scope creep), Minor 5건. PASS."
+}
